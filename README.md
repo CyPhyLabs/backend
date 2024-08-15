@@ -10,14 +10,4 @@ Run the setup script:
 sh setup.sh
 ```
 
-
-
-
-
-#### TODO List
-- (DONE): Create shell script for database/general setup if postgres is not installed
-- (DONE): generate .yml file from conda environment
-
-- (TODO): architect the authentication and authorization system -> create datamodel and API endpoints
-- (TODO): Message lifecyle -> create datamodel and API endpoints
-- (TODO): unit/integration tests later on for API endpoints
+[System Architecture](https://share.note.sx/9vau4ml0#lLpd78nIKU1R8flLQTqh8y2RtP/UR9IeSkqEjtYqxOE)
