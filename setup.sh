@@ -58,6 +58,7 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate $ENV_NAME
 
 # Make migrations
-python t2t_api/manage.py migrate
+python t2t_api/manage.py makemigrations
+python t2t_api/manage.py migrate 
 
 echo "Setup complete."
