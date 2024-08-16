@@ -10,4 +10,4 @@ Run the setup script:
 sh setup.sh
 ```
 
-[System Architecture](https://share.note.sx/9vau4ml0#lLpd78nIKU1R8flLQTqh8y2RtP/UR9IeSkqEjtYqxOE)
+[System Architecture](https://share.note.sx/ah8pbqa0#PHmxIf3Cjm1mJRmBMKWz/n37hJOXdCwuHMdRgPG4kE8)
