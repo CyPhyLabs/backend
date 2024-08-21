@@ -14,7 +14,10 @@ from pathlib import Path
 from datetime import timedelta
 import environ
 import sys
-# from firebase_admin import initialize_app
+
+# firebase imports
+import firebase_admin
+from firebase_admin import credentials
 
 env = environ.Env()
 # reading .env file
@@ -171,11 +174,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
-# FCM_API_KEY = env('FCM_API_KEY')
-# APNS_CERTIFICATE = env('APNS_CERTIFICATE')
-
-
-# FIREBASE_APP = initialize_app()
+cred = credentials.Certificate(env('FCM_SERVICE_ACCOUNT_PATH'))
+firebase_admin.initialize_app(cred)
 
 # FCM_DJANGO_SETTINGS = {
 #      # an instance of firebase_admin.App to be used as default for all fcm-django requests
