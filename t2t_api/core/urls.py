@@ -5,10 +5,17 @@ from rest_framework_simplejwt.views import (
 )
 from .api import RegisterView, LogoutView
 from .api.message_view import (
-    CreateMessageView, ListMessagesView, RetrieveMessageView,
+    # CreateMessageView, 
+    ListMessagesView, RetrieveMessageView,
     UpdateMessageView, DeleteMessageView, ListNotificationsView,
     UpdateNotificationStatusView
 )
+
+from .api.test_message_view import(
+    CreateMessageView
+)
+
+
 
 
 
@@ -20,7 +27,7 @@ urlpatterns = [
 
 
     # Message APIs
-    path('messages/', CreateMessageView.as_view(), name='create-message'),
+    # path('messages/', CreateMessageView.as_view(), name='create-message'),
     path('messages/', ListMessagesView.as_view(), name='list-messages'),
     path('messages/<uuid:id>/', RetrieveMessageView.as_view(), name='retrieve-message'),
     path('messages/<uuid:id>/', UpdateMessageView.as_view(), name='update-message'),
@@ -30,4 +37,7 @@ urlpatterns = [
     path('user/<uuid:user_id>/notifications/', ListNotificationsView.as_view(), name='list-notifications'),
     path('user/<uuid:user_id>/notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
     path('user/<uuid:user_id>/notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
+
+    # test fcm sending apis
+    path('create-message/', CreateMessageView.as_view(), name='create-message'),
 ]
