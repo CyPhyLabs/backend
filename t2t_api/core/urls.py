@@ -18,12 +18,15 @@ from .api.test_message_view import(
 
 
 
+from .api import RegisterView, LogoutView, CustomTokenObtainPairView, CustomTokenRefreshView, TestUserIDView
+
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
-    path('login/', TokenObtainPairView.as_view(), name='login'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='refresh'),
+    path('login/', CustomTokenObtainPairView.as_view(), name='login'),
+    path('token/refresh/', CustomTokenRefreshView.as_view(), name='refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
+
 
 
     # Message APIs
@@ -40,4 +43,6 @@ urlpatterns = [
 
     # test fcm sending apis
     path('create-message/', CreateMessageView.as_view(), name='create-message'),
+
+    path('test/', TestUserIDView.as_view(), name='test'),
 ]
