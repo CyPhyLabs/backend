@@ -15,6 +15,10 @@ from datetime import timedelta
 import environ
 import sys
 
+# firebase imports
+import firebase_admin
+from firebase_admin import credentials
+
 env = environ.Env()
 # reading .env file
 environ.Env.read_env()
@@ -52,6 +56,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    # "fcm_django",
 ]
 
 REST_FRAMEWORK = {
@@ -172,3 +177,21 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.CustomUser'
+
+cred = credentials.Certificate(env('FCM_SERVICE_ACCOUNT_PATH'))
+firebase_admin.initialize_app(cred)
+
+# FCM_DJANGO_SETTINGS = {
+#      # an instance of firebase_admin.App to be used as default for all fcm-django requests
+#      # default: None (the default Firebase app)
+#     "DEFAULT_FIREBASE_APP": None,
+#      # default: _('FCM Django')
+#     "APP_VERBOSE_NAME": "[string for AppConfig's verbose_name]",
+#      # true if you want to have only one active device per registered user at a time
+#      # default: False
+#     "ONE_DEVICE_PER_USER": True/False,
+#      # devices to which notifications cannot be sent,
+#      # are deleted upon receiving error response from FCM
+#      # default: False
+#     "DELETE_INACTIVE_DEVICES": True/False,
+# }
