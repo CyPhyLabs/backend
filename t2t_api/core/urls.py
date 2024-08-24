@@ -37,9 +37,9 @@ urlpatterns = [
     path('messages/<uuid:id>/', DeleteMessageView.as_view(), name='delete-message'),
 
     # Recipient APIs
-    path('user/<uuid:user_id>/notifications/', ListNotificationsView.as_view(), name='list-notifications'),
-    path('user/<uuid:user_id>/notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
-    path('user/<uuid:user_id>/notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
+    path('notifications/', ListNotificationsView.as_view(), name='list-notifications'),
+    path('notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
+    path('notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
 
     # test fcm sending apis
     path('create-message/', CreateMessageView.as_view(), name='create-message'),
