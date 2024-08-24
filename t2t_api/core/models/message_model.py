@@ -15,10 +15,14 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp of creation
     updated_at = models.DateTimeField(auto_now=True)  # Timestamp of last update
     attachment_url = models.URLField(null=True, blank=True)  # Link to object storage for attachment
+    priority = models.CharField(max_length=50, choices=[
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('high', 'High'),
+    ], default='low')  # Priority of the message
 
     def __str__(self):
         return f"Message {self.id} - Status: {self.status}"
-
 
 class Recipient(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
