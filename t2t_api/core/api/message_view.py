@@ -3,14 +3,23 @@ from rest_framework.response import Response
 from core.models.message_model import Message, Recipient
 from core.serializers.message import MessageSerializer, RecipientSerializer
 from firebase_admin import messaging
+# import isuser and is staff from permissions.py
+from core.permissions import IsUser, IsStaff
+# import is authenticated
+from rest_framework.permissions import IsAuthenticated
+
 
 class CreateMessageView(generics.CreateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsStaff]
 
     def perform_create(self, serializer):
         # Save the message
-        message = serializer.save()
+        message = serializer.save(created_by=self.request.user.id)
+        # set created field of the message model by to request.user_id
+        message.message["created_by"] = str(self.request.user.id)  # Convert UUID to string
+        message.save()
 
         # Update the message JSON field with the message ID
         message.message['message_id'] = str(message.id)
