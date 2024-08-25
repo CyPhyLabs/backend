@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.models import Message, Recipient
+from core.models import Message
 from rest_framework.exceptions import ValidationError
 import uuid
 
@@ -74,21 +74,3 @@ class MessageSerializer(serializers.ModelSerializer):
 
         # Update the instance
         return super().update(instance, validated_data)
-
-class RecipientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Recipient
-        fields = ['id', 'user_id', 'message_id', 'status', 'acknowledged', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
-
-    def create(self, validated_data):
-        # Extract the user from the request context
-        user = self.context['request'].user
-
-        # Assign the user ID to the user_id field
-        validated_data['user_id'] = user.id
-
-        # Create the Recipient object
-        recipient = super().create(validated_data)
-
-        return recipient

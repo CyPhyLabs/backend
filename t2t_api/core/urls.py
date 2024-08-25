@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .api import RegisterView, LogoutView
-from .api.message_view import (
+from .api import (
     CreateMessageView, 
     ListMessagesView, RetrieveMessageView,
     UpdateMessageView, DeleteMessageView, ListNotificationsView,

@@ -1,12 +1,10 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from core.models.message_model import Message, Recipient
-from core.serializers.message import MessageSerializer, RecipientSerializer
-from firebase_admin import messaging
-# import isuser and is staff from permissions.py
+from core.serializers.message import MessageSerializer
 from core.permissions import IsUser, IsStaff
-# import is authenticated
 from rest_framework.permissions import IsAuthenticated
+from core.services.fcm_service import send_fcm_message
 
 
 class CreateMessageView(generics.CreateAPIView):
@@ -25,25 +23,8 @@ class CreateMessageView(generics.CreateAPIView):
         message.message['message_id'] = str(message.id)
         message.save()
 
-        # Format message for FCM
-        fcm_message = messaging.Message(
-            data={
-                'title': message.message.get('title'),
-                'body': message.message.get('body'),
-                'message_id': str(message.id),
-            },
-            topic=message.target_audience,
-        )
-
-        # Send message via FCM
-        try:
-            response = messaging.send(fcm_message)
-            message.status = 'sent'
-        except Exception as e:
-            message.status = 'failed'
-        
-        # Save the message with updated status
-        message.save()
+        # Send message via FCM using the service function
+        send_fcm_message(message)
 
 
         # NEED TO IMPLEMENT LOGIC FOR THIS
@@ -97,18 +78,3 @@ class DeleteMessageView(generics.DestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({"message": "Message deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-    
-class ListNotificationsView(generics.ListAPIView):
-    serializer_class = RecipientSerializer
-
-    def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return Recipient.objects.filter(user_id=user_id)
-
-class UpdateNotificationStatusView(generics.UpdateAPIView):
-    serializer_class = RecipientSerializer
-
-    def get_object(self):
-        user_id = self.kwargs['user_id']
-        notification_id = self.kwargs['notification_id']
-        return Recipient.objects.get(user_id=user_id, id=notification_id)
