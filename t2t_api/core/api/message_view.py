@@ -12,6 +12,10 @@ class CreateMessageView(generics.CreateAPIView):
         # Save the message
         message = serializer.save()
 
+        # Update the message JSON field with the message ID
+        message.message['message_id'] = str(message.id)
+        message.save()
+
         # Format message for FCM
         fcm_message = messaging.Message(
             data={
@@ -40,8 +44,7 @@ class CreateMessageView(generics.CreateAPIView):
         for user_id in users:
             Recipient.objects.create(user_id=user_id, message_id=message)
 
-class ListMessagesView(generics.ListAPIView):
-    # NEED TO IMPLEMENT LOGIC FOR THIS
+class ListMessagesView(generics.ListAPIView): # works
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
@@ -49,14 +52,43 @@ class RetrieveMessageView(generics.RetrieveAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        message_id = self.kwargs.get('id')
+        if message_id:
+            obj = generics.get_object_or_404(queryset, id=message_id)
+            return obj
+        return None
+
 class UpdateMessageView(generics.UpdateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        message_id = self.kwargs.get('id')
+        if message_id:
+            obj = generics.get_object_or_404(queryset, id=message_id)
+            return obj
+        return None
 
 class DeleteMessageView(generics.DestroyAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        message_id = self.kwargs.get('id')
+        if message_id:
+            obj = generics.get_object_or_404(queryset, id=message_id)
+            return obj
+        return None
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Message deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+    
 class ListNotificationsView(generics.ListAPIView):
     serializer_class = RecipientSerializer
 
