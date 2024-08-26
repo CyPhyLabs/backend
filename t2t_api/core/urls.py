@@ -39,8 +39,7 @@ urlpatterns = [
 
     # Recipient APIs
     path('notifications/', ListNotificationsView.as_view(), name='list-notifications'),
-    path('notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
-    path('notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
+    path('notifications/<uuid:notification_id>/<str:action>/', UpdateNotificationStatusView.as_view(), name='update-notification-status'),
     path('notifications/all/', ListAllNotificationsView.as_view(), name='list-all-notifications'),
 
     # test fcm sending apis
