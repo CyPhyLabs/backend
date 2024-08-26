@@ -4,4 +4,4 @@ from .logout import LogoutView
 from .tokens import CustomTokenObtainPairView, CustomTokenRefreshView
 from .testView import TestUserIDView
 from .message_view import CreateMessageView, ListMessagesView, RetrieveMessageView, UpdateMessageView, DeleteMessageView
-from .recipient_view import ListNotificationsView, UpdateNotificationStatusView
+from .recipient_view import ListNotificationsView, UpdateNotificationStatusView, ListAllNotificationsView

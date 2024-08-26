@@ -12,9 +12,18 @@ class ListNotificationsView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.request.user.id
         return Recipient.objects.filter(user_id=user_id)
+    
+# list all the entries in recipient model regardless of the user
+class ListAllNotificationsView(generics.ListAPIView):
+    serializer_class = RecipientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Recipient.objects.all()
 
 class UpdateNotificationStatusView(generics.UpdateAPIView):
     serializer_class = RecipientSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         user_id = self.request.user.id

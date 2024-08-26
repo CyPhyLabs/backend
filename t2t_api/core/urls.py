@@ -8,7 +8,8 @@ from .api import (
     CreateMessageView, 
     ListMessagesView, RetrieveMessageView,
     UpdateMessageView, DeleteMessageView, ListNotificationsView,
-    UpdateNotificationStatusView
+    UpdateNotificationStatusView, 
+    ListAllNotificationsView
 )
 
 # from .api.test_message_view import(
@@ -40,6 +41,7 @@ urlpatterns = [
     path('notifications/', ListNotificationsView.as_view(), name='list-notifications'),
     path('notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
     path('notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
+    path('notifications/all/', ListAllNotificationsView.as_view(), name='list-all-notifications'),
 
     # test fcm sending apis
     # path('create-message/', CreateMessageView.as_view(), name='create-message'),

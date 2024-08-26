@@ -5,6 +5,7 @@ from core.serializers.message import MessageSerializer
 from core.permissions import IsUser, IsStaff
 from rest_framework.permissions import IsAuthenticated
 from core.services.fcm_service import send_fcm_message
+from core.models.custom_user import CustomUser
 
 
 class CreateMessageView(generics.CreateAPIView):
@@ -27,12 +28,19 @@ class CreateMessageView(generics.CreateAPIView):
         send_fcm_message(message)
 
 
-        # NEED TO IMPLEMENT LOGIC FOR THIS
-        # Populate Recipient table (you'll need to adapt this to your needs)
-        # Example: assuming `users` is a list of user IDs
-        users = []  # Fetch the list of users based on the target audience
-        for user_id in users:
-            Recipient.objects.create(user_id=user_id, message_id=message)
+        # Populate Recipient table
+        target_audience = message.target_audience
+        if target_audience == 'everyone':
+            users = CustomUser.objects.all()
+        elif target_audience == 'staff':
+            users = CustomUser.objects.filter(user_type='staff')
+        elif target_audience == 'veterans':
+            users = CustomUser.objects.filter(user_type='user')
+        else:
+            users = []
+
+        for user in users:
+            Recipient.objects.create(user_id=user.id, message_id=message)
 
 class ListMessagesView(generics.ListAPIView): # works
     queryset = Message.objects.all()
@@ -78,3 +86,4 @@ class DeleteMessageView(generics.DestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({"message": "Message deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
