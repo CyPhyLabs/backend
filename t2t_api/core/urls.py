@@ -4,16 +4,17 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .api import RegisterView, LogoutView
-from .api.message_view import (
-    # CreateMessageView, 
+from .api import (
+    CreateMessageView, 
     ListMessagesView, RetrieveMessageView,
     UpdateMessageView, DeleteMessageView, ListNotificationsView,
-    UpdateNotificationStatusView
+    UpdateNotificationStatusView, 
+    ListAllNotificationsView
 )
 
-from .api.test_message_view import(
-    CreateMessageView
-)
+# from .api.test_message_view import(
+#     CreateMessageView
+# )
 
 
 
@@ -30,19 +31,19 @@ urlpatterns = [
 
 
     # Message APIs
-    # path('messages/', CreateMessageView.as_view(), name='create-message'),
+    path('messages/create/', CreateMessageView.as_view(), name='create-message'),
     path('messages/', ListMessagesView.as_view(), name='list-messages'),
     path('messages/<uuid:id>/', RetrieveMessageView.as_view(), name='retrieve-message'),
-    path('messages/<uuid:id>/', UpdateMessageView.as_view(), name='update-message'),
-    path('messages/<uuid:id>/', DeleteMessageView.as_view(), name='delete-message'),
+    path('messages/<uuid:id>/update/', UpdateMessageView.as_view(), name='update-message'),
+    path('messages/<uuid:id>/delete/', DeleteMessageView.as_view(), name='delete-message'),
 
     # Recipient APIs
-    path('user/<uuid:user_id>/notifications/', ListNotificationsView.as_view(), name='list-notifications'),
-    path('user/<uuid:user_id>/notifications/<uuid:notification_id>/delivered/', UpdateNotificationStatusView.as_view(), name='delivered-notification'),
-    path('user/<uuid:user_id>/notifications/<uuid:notification_id>/acknowledge/', UpdateNotificationStatusView.as_view(), name='acknowledge-notification'),
+    path('notifications/', ListNotificationsView.as_view(), name='list-notifications'),
+    path('notifications/<uuid:notification_id>/<str:action>/', UpdateNotificationStatusView.as_view(), name='update-notification-status'),
+    path('notifications/all/', ListAllNotificationsView.as_view(), name='list-all-notifications'),
 
     # test fcm sending apis
-    path('create-message/', CreateMessageView.as_view(), name='create-message'),
+    # path('create-message/', CreateMessageView.as_view(), name='create-message'),
 
     path('test/', TestUserIDView.as_view(), name='test'),
 ]
