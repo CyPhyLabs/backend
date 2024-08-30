@@ -1,8 +1,4 @@
 from django.urls import path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 from .api import RegisterView, LogoutView
 from .api import (
     CreateMessageView, 
@@ -19,7 +15,7 @@ from .api import (
 
 
 
-from .api import RegisterView, LogoutView, CustomTokenObtainPairView, CustomTokenRefreshView, TestUserIDView
+from .api import RegisterView, LogoutView, CustomTokenObtainPairView, CustomTokenRefreshView, TestUserIDView, DeviceTokenView
 
 
 urlpatterns = [
@@ -42,8 +38,12 @@ urlpatterns = [
     path('notifications/<uuid:notification_id>/<str:action>/', UpdateNotificationStatusView.as_view(), name='update-notification-status'),
     path('notifications/all/', ListAllNotificationsView.as_view(), name='list-all-notifications'),
 
+    # Device Token APIs
+    path('device-token/', DeviceTokenView.as_view(), name='device-token'),
+
     # test fcm sending apis
     # path('create-message/', CreateMessageView.as_view(), name='create-message'),
 
+    # test user id
     path('test/', TestUserIDView.as_view(), name='test'),
 ]
