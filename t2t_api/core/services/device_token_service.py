@@ -1,6 +1,7 @@
 import logging
 from firebase_admin import messaging
 from django.utils import timezone
+
 from ..models import Device
 
 logger = logging.getLogger('__main__')

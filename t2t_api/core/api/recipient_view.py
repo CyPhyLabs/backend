@@ -1,10 +1,11 @@
 import logging
 from rest_framework import generics, status
 from rest_framework.response import Response
-from core.models.message_model import Message, Recipient
-from core.serializers.recipient import RecipientSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+
+from ..models import Message, Recipient
+from ..serializers import RecipientSerializer
 
 logger = logging.getLogger(__name__)
 

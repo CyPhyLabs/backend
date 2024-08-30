@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+
 from ..models import Device
 from ..serializers import DeviceSerializer
 from ..services import handle_device_token

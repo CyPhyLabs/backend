@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from core.models import Message
 from rest_framework.exceptions import ValidationError
 import uuid
+
+from ..models import Message
 
 class MessageSerializer(serializers.ModelSerializer):
     title = serializers.CharField(write_only=True)

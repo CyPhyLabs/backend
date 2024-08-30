@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from core.models import Recipient, Message
 from rest_framework.exceptions import ValidationError
 import uuid
 
+from ..models import Recipient, Message
 
 class RecipientSerializer(serializers.ModelSerializer):
     message = serializers.SerializerMethodField()
