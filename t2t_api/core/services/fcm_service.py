@@ -4,6 +4,10 @@ from firebase_admin import messaging
 
 def send_fcm_message(message):
     fcm_message = messaging.Message(
+        notification=messaging.Notification(
+            title=message.message.get('title'),
+            body=message.message.get('body'),
+        ),
         data={
             'title': message.message.get('title'),
             'body': message.message.get('body'),
