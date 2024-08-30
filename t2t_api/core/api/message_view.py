@@ -1,11 +1,12 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
-from core.models.message_model import Message, Recipient
-from core.serializers.message import MessageSerializer
-from core.permissions import IsUser, IsStaff
 from rest_framework.permissions import IsAuthenticated
-from core.services.fcm_service import send_fcm_message
-from core.models.custom_user import CustomUser
+
+from ..models import Message, Recipient
+from ..serializers import MessageSerializer
+from ..permissions import IsUser, IsStaff
+from ..services import send_fcm_message
+from ..models import CustomUser
 
 
 class CreateMessageView(generics.CreateAPIView):
