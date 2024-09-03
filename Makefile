@@ -33,6 +33,16 @@ unpause:
 	docker compose -f $(DOCKER_COMPOSE_FILE) unpause
 
 # Stop the Docker containers
+.PHONY: stop
+stop:
+	docker compose -f $(DOCKER_COMPOSE_FILE) stop
+
+# Start the Docker containers
+.PHONY: start
+start:
+	docker compose -f $(DOCKER_COMPOSE_FILE) start
+
+# Remove the Docker containers
 .PHONY: down
 down:
 	docker compose -f $(DOCKER_COMPOSE_FILE) down
@@ -81,7 +91,9 @@ help:
 	@echo "  make up-fg       - Run the Docker containers in the foreground"
 	@echo "  make pause       - Pause the Docker containers"
 	@echo "  make unpause     - Unpause the Docker containers"
-	@echo "  make down        - Stop the Docker containers"
+	@echo "  make stop        - Stop the Docker containers"
+	@echo "  make start       - Start the Docker containers"
+	@echo "  make down        - Stop and remove the Docker containers"
 	@echo "  make rebuild     - Rebuild the Docker images and run the containers in detached mode"
 	@echo "  make logs-web    - View logs for the web service"
 	@echo "  make logs-db     - View logs for the database service"
