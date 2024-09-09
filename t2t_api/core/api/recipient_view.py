@@ -42,6 +42,8 @@ class UpdateNotificationStatusView(generics.UpdateAPIView):
 
         if action == 'delivered':
             instance.status = 'delivered'
+            instance.delivered_at = instance.updated_at
+
         elif action == 'acknowledge':
             instance.acknowledged = True
 

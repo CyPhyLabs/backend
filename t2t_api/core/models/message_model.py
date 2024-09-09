@@ -35,6 +35,7 @@ class Recipient(models.Model):
     ], default='pending')  # Delivery status
     acknowledged = models.BooleanField(default=False)  # Acknowledgment status
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp of creation
+    delivered_at = models.DateTimeField(null=True, blank=True)  # Timestamp of delivery
     updated_at = models.DateTimeField(auto_now=True)  # Timestamp of last update
 
     def __str__(self):
