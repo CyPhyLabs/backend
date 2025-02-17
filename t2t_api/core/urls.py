@@ -8,12 +8,6 @@ from .api import (
     ListAllNotificationsView
 )
 
-# from .api.test_message_view import(
-#     CreateMessageView
-# )
-
-
-
 
 from .api import RegisterView, LogoutView, CustomTokenObtainPairView, CustomTokenRefreshView, TestUserIDView, DeviceTokenView
 

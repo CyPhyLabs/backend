@@ -69,6 +69,7 @@ class MessageSerializer(serializers.ModelSerializer):
             message_data['title'] = title
         if body:
             message_data['body'] = body
+            
         message_data['priority'] = priority
 
         validated_data['message'] = message_data
