@@ -37,7 +37,8 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', default=False) == 'True'
 
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(' ')
-
+CSRF_TRUSTED_ORIGINS = env('CSRF_TRUSTED_ORIGINS').split(' ')
+CORS_ALLOWED_ORIGINS = env('CORS_ALLOWED_ORIGINS').split(' ')
 
 # Application definition
 
@@ -79,6 +80,10 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
     },
 }
 
@@ -219,3 +224,10 @@ firebase_admin.initialize_app(cred)
 #      # default: False
 #     "DELETE_INACTIVE_DEVICES": True/False,
 # }
+
+
+print(f"DB_HOST: {env('DB_HOST')}")
+print(f"DB_NAME: {env('DB_NAME')}")
+print(f"DB_USER: {env('DB_USER')}")
+print(f"DB_PASSWORD: {env('DB_PASSWORD')}")
+print(f"DB_PORT: {env('DB_PORT')}")
