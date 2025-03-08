@@ -155,6 +155,7 @@ if 'test' in sys.argv:
     }
 else:
     DATABASE_URL = env('DATABASE_URL', default=None)
+    print(f"DATABASE_URL: {DATABASE_URL}")
 
     if DATABASE_URL:
         # Use DATABASE_URL if provided (Render deployment)
@@ -165,18 +166,18 @@ else:
                 conn_health_checks=True,
             )
         }
-    else:
-        # Use local PostgreSQL settings if no DATABASE_URL (local development)
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': env('DB_NAME'),
-                'USER': env('DB_USER'),
-                'PASSWORD': env('DB_PASSWORD'),
-                'HOST': env('DB_HOST', default='localhost'),
-                'PORT': env('DB_PORT'),
-            }
-        }
+    # else:
+    #     # Use local PostgreSQL settings if no DATABASE_URL (local development)
+    #     DATABASES = {
+    #         'default': {
+    #             'ENGINE': 'django.db.backends.postgresql',
+    #             'NAME': env('DB_NAME'),
+    #             'USER': env('DB_USER'),
+    #             'PASSWORD': env('DB_PASSWORD'),
+    #             'HOST': env('DB_HOST', default='localhost'),
+    #             'PORT': env('DB_PORT'),
+    #         }
+    #     }
 
 
     # DATABASES = {
