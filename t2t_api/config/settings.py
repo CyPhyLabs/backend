@@ -266,6 +266,3 @@ firebase_admin.initialize_app(cred)
 
 print(f"DB_HOST: {env('DB_HOST')}")
 print(f"DB_NAME: {env('DB_NAME')}")
-print(f"DB_USER: {env('DB_USER')}")
-print(f"DB_PASSWORD: {env('DB_PASSWORD')}")
-print(f"DB_PORT: {env('DB_PORT')}")
