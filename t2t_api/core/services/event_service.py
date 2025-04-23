@@ -11,19 +11,22 @@ def get_calendar_service():
     )
     return build('calendar', 'v3', credentials=credentials)
 
-def fetch_events(calendar_id, time_min=None, time_max=None, query=None):
-    """
-    Fetch events from Google Calendar with optional time range and search query.
-    
-    Args:
-        calendar_id (str): The Google Calendar ID
-        time_min (datetime or str): Start time for fetching events
-        time_max (datetime or str): End time for fetching events
-        query (str): Optional search term
-    
-    Returns:
-        list: List of formatted calendar events
-    """
+def format_google_event(event):
+    return {
+        "id": event.get("id"),
+        "title": event.get("summary"),
+        "description": event.get("description"),
+        "location": event.get("location"),
+        "start": event["start"].get("dateTime", event["start"].get("date")),
+        "end": event["end"].get("dateTime", event["end"].get("date")),
+        'audience': event.get('extendedProperties', {}).get('private', {}).get('audience', 'everyone'),
+        "status": event.get("status"),
+        "htmlLink": event.get("htmlLink"),  # optional: frontend might use this
+
+    }
+
+
+def fetch_events(calendar_id, time_min=None, time_max=None, query=None, audience=None):
     service = get_calendar_service()
     import logging
     logger = logging.getLogger(__name__)
@@ -68,26 +71,28 @@ def fetch_events(calendar_id, time_min=None, time_max=None, query=None):
         # Make the API call
         logger.debug(f"Calling Google Calendar API with params: {params}")
         events_result = service.events().list(calendarId=calendar_id, **params).execute()
-        events = events_result.get('items', [])
-        logger.debug(f"Retrieved {len(events)} events from Google Calendar")
+        raw_events = events_result.get('items', [])
+        logger.debug(f"Retrieved {len(raw_events)} events from Google Calendar")
+
+        raw_events = events_result.get('items', [])
+
+        # Filter events based on audience
+        filtered_events = []
+        for event in raw_events:
+            event_audience = (
+                event.get('extendedProperties', {})
+                    .get('private', {})
+                    .get('audience', 'everyone')
+            )
+            # if audience is None or audience == event_audience or event_audience == 'everyone':
+            if event_audience == 'everyone' or event_audience == audience or audience is None:
+                filtered_events.append(event)
         
         # Format the events for consistent output
         formatted_events = []
-        for event in events:
+        for event in filtered_events:
             try:
-                formatted_event = {
-                    'id': event.get('id'),
-                    'title': event.get('summary'),
-                    'description': event.get('description'),
-                    'location': event.get('location'),
-                    'start': event['start'].get('dateTime', event['start'].get('date')),
-                    'end': event['end'].get('dateTime', event['end'].get('date')),
-                    'created': event.get('created'),
-                    'updated': event.get('updated'),
-                    'status': event.get('status'),
-                    'organizer': event.get('organizer', {}).get('email'),
-                }
-                formatted_events.append(formatted_event)
+                formatted_events.append(format_google_event(event))
             except KeyError as e:
                 logger.warning(f"Skipping malformed event: {e}")
                 continue

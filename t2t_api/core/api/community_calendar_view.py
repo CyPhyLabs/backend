@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from ..services import fetch_events, create_event, update_event, delete_event
+from ..services import fetch_events, create_event, update_event, delete_event, format_google_event
 from ..serializers import EventSerializer
 from ..models import CommunityCalendar
 from django.utils.dateparse import parse_datetime
@@ -26,6 +26,9 @@ class CommunityCalendarEventsView(APIView):
 
         start_param = request.GET.get("start")
         end_param = request.GET.get("end")
+        audience = request.GET.get("audience")
+        if audience not in [None, "everyone", "staff", "user"]:
+            return Response({"error": "Invalid audience query."}, status=400)
 
         if not start_param:
             time_min = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -49,6 +52,10 @@ class CommunityCalendarEventsView(APIView):
 
     def post(self, request):
         calendar_id = request.GET.get("calendar_id")
+        audience = request.data.get("audience", "everyone")
+        if audience not in ["everyone", "staff", "user"]:
+            return Response({"error": "Invalid audience value."}, status=400)
+        
         if not calendar_id:
             return Response({"error": "Missing calendar_id in query params."}, status=status.HTTP_400_BAD_REQUEST)
         calendar = get_object_or_404(CommunityCalendar, calendar_id=calendar_id)
@@ -56,18 +63,25 @@ class CommunityCalendarEventsView(APIView):
         serializer = EventSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        
         event_data = {
             'summary': serializer.validated_data['title'],
             'description': serializer.validated_data.get('description', ''),
             'start': {'dateTime': serializer.validated_data['start_time'].isoformat(), 'timeZone': 'America/Chicago'},
             'end': {'dateTime': serializer.validated_data['end_time'].isoformat(), 'timeZone': 'America/Chicago'},
-            'location': serializer.validated_data.get('location', '')
+            'location': serializer.validated_data.get('location', ''),
+            'extendedProperties': {
+                'private': {
+                    'audience': audience
+                }
+            }
+
         }
 
         try:
             created_event = create_event(calendar_id, event_data)
-            return Response(created_event, status=status.HTTP_201_CREATED)
+            return Response(format_google_event(created_event), status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -92,7 +106,7 @@ class CommunityCalendarEventsView(APIView):
                     'location': serializer.validated_data.get('location', '')
                 }
             )
-            return Response(updated_event)
+            return Response(format_google_event(updated_event))
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
