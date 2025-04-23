@@ -83,7 +83,7 @@ LOGGING = {
     },
     'root': {
         'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'DEBUG',
     },
 }
 
@@ -209,6 +209,8 @@ AUTH_USER_MODEL = 'core.CustomUser'
 FCM_SERVICE_ACCOUNT_PATH = BASE_DIR / env('FCM_SERVICE_ACCOUNT_PATH')
 cred = credentials.Certificate(FCM_SERVICE_ACCOUNT_PATH)
 firebase_admin.initialize_app(cred)
+
+GOOGLE_SERVICE_ACCOUNT_PATH = BASE_DIR / env('GOOGLE_SERVICE_ACCOUNT_PATH')
 
 # FCM_DJANGO_SETTINGS = {
 #      # an instance of firebase_admin.App to be used as default for all fcm-django requests

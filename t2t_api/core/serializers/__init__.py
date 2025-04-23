@@ -4,3 +4,5 @@ from .tokens import CustomTokenObtainPairSerializer, CustomTokenRefreshSerialize
 from .device_tokens import DeviceSerializer
 from .message import MessageSerializer
 from .recipient import RecipientSerializer
+from .calendar import PersonalCalendarSerializer, CommunityCalendarSerializer, CommunityCalendarDetailSerializer
+from .event import EventSerializer
