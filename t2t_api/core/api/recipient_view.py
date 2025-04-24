@@ -50,3 +50,22 @@ class UpdateNotificationStatusView(generics.UpdateAPIView):
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+    
+
+class DeleteNotificationView(generics.DestroyAPIView):
+    queryset = Recipient.objects.all()
+    serializer_class = RecipientSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        queryset = self.get_queryset().filter(user_id=self.request.user.id)
+        notification_id = self.kwargs.get('notification_id')
+        if notification_id:
+            obj = get_object_or_404(queryset, message_id=notification_id)
+            return obj
+        return None
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Notification deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
