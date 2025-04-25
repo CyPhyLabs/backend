@@ -14,6 +14,8 @@ from pathlib import Path
 from datetime import timedelta
 import environ
 import sys
+import dj_database_url
+import os
 
 # firebase imports
 import firebase_admin
@@ -117,6 +119,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -151,16 +154,46 @@ if 'test' in sys.argv:
         }
     }
 else:
+    DATABASE_URL = env('DATABASE_URL', default=None)
+    print(f"DATABASE_URL: {DATABASE_URL}")
+
+    if not DATABASE_URL:
+        raise ValueError(
+            "No DATABASE_URL environment variable set. "
+            "Make sure you have configured the DATABASE_URL in your .env file."
+        )
+    
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env('DB_NAME'),
-            'USER': env('DB_USER'),
-            'PASSWORD': env('DB_PASSWORD'),
-            'HOST': env('DB_HOST', default='localhost'),
-            'PORT': env('DB_PORT'),
-        }
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
+    # else:
+    #     # Use local PostgreSQL settings if no DATABASE_URL (local development)
+    #     DATABASES = {
+    #         'default': {
+    #             'ENGINE': 'django.db.backends.postgresql',
+    #             'NAME': env('DB_NAME'),
+    #             'USER': env('DB_USER'),
+    #             'PASSWORD': env('DB_PASSWORD'),
+    #             'HOST': env('DB_HOST', default='localhost'),
+    #             'PORT': env('DB_PORT'),
+    #         }
+    #     }
+
+
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql',
+    #         'NAME': env('DB_NAME'),
+    #         'USER': env('DB_USER'),
+    #         'PASSWORD': env('DB_PASSWORD'),
+    #         'HOST': env('DB_HOST', default='localhost'),
+    #         'PORT': env('DB_PORT'),
+    #     }
+    # }
 
 
 # Password validation
@@ -196,8 +229,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATIC_URL = 'static/'
+
+# This production code might break development mode, so we check whether we're in DEBUG mode
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -207,10 +249,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'core.CustomUser'
 
 FCM_SERVICE_ACCOUNT_PATH = BASE_DIR / env('FCM_SERVICE_ACCOUNT_PATH')
-cred = credentials.Certificate(FCM_SERVICE_ACCOUNT_PATH)
-firebase_admin.initialize_app(cred)
-
 GOOGLE_SERVICE_ACCOUNT_PATH = BASE_DIR / env('GOOGLE_SERVICE_ACCOUNT_PATH')
+# cred = credentials.Certificate(FCM_SERVICE_ACCOUNT_PATH)
+
+def initialize_firebase():
+    """Initialize Firebase Admin SDK if not already initialized"""
+    try:
+        # Try to get default app first
+        default_app = firebase_admin.get_app()
+    except ValueError:
+        # If no default app exists, try to get our named app
+        try:
+            app = firebase_admin.get_app('reflecto-app')
+        except ValueError:
+            # If neither exists, initialize with our service account
+            cred = credentials.Certificate(FCM_SERVICE_ACCOUNT_PATH)
+            firebase_admin.initialize_app(cred, name='reflecto-app')
+
+# Initialize Firebase
+initialize_firebase()
 
 # FCM_DJANGO_SETTINGS = {
 #      # an instance of firebase_admin.App to be used as default for all fcm-django requests
@@ -230,6 +287,3 @@ GOOGLE_SERVICE_ACCOUNT_PATH = BASE_DIR / env('GOOGLE_SERVICE_ACCOUNT_PATH')
 
 print(f"DB_HOST: {env('DB_HOST')}")
 print(f"DB_NAME: {env('DB_NAME')}")
-print(f"DB_USER: {env('DB_USER')}")
-print(f"DB_PASSWORD: {env('DB_PASSWORD')}")
-print(f"DB_PORT: {env('DB_PORT')}")
