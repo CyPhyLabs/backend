@@ -20,3 +20,4 @@ from .calendar_view import  (
 )
 from .community_calendar_view import CommunityCalendarEventsView
 from .personal_calendar_view import PersonalCalendarEventsView
+from .mirror_token_view import MirrorRefreshTokenView

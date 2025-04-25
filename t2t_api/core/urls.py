@@ -29,6 +29,7 @@ from .api import (
     CommunityCalendarEventsView,
     PersonalCalendarEventsView
 )
+from .api import MirrorRefreshTokenView
 
 
 
@@ -38,6 +39,9 @@ urlpatterns = [
     path('login/', CustomTokenObtainPairView.as_view(), name='login'),
     path('token/refresh/', CustomTokenRefreshView.as_view(), name='refresh'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    
+    # Mirror Token endpoint
+    path('mirror-auth/refresh/', MirrorRefreshTokenView.as_view(), name='mirror-refresh-token'),
 
 
 
@@ -76,8 +80,6 @@ urlpatterns = [
     # Generate Community Calendar
     path("calendars/community/generate/", GenerateCommunityCalendarView.as_view(), name="generate_community_calendar"),
     path("calendars/community/events/", CommunityCalendarEventsView.as_view(), name='community-calendar-events'),
-
-    
     
 
     # test fcm sending apis
